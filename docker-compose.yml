@@ -1,0 +1,8 @@
+services:
+  bike-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./static/plots:/app/static/plots

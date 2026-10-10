@@ -1,0 +1,49 @@
+{% extends "base.html" %}{% block body %}
+<h1>Forecast demand</h1>
+<div class="sub">Pick a date, hour and weather. You get the forecast for that hour and for the whole day.</div>
+
+{% if not trained %}<div class="flash err">The model isn't trained yet. Go to the Dashboard and train it.</div>{% endif %}
+{% if error %}<div class="flash err">{{ error }}</div>{% endif %}
+
+{% if result %}
+<div class="card" style="border-color:var(--acc)">
+  <div class="sub" style="margin:0">{{ result.date }} · {{ '%02d'|format(result.hr) }}:00</div>
+  <h2 style="margin:4px 0">🚲 ~{{ result.value }} rentals <span class="badge {{ result.level }}">{{ result.level }} demand</span></h2>
+  <div>Whole day: <b>~{{ '{:,}'.format(result.day_total) }}</b> rentals · peak hour <b>{{ '%02d'|format(result.peak_hr) }}:00</b></div>
+  <div class="chart" style="margin-bottom:22px">
+    {% for v in result.day %}<div class="{{ 'sel' if loop.index0==result.hr }}" style="height:{{ (v/result.max*100)|round }}%" title="{{ loop.index0 }}:00 → {{ v }}">{% if loop.index0 % 3 == 0 %}<span>{{ loop.index0 }}</span>{% endif %}</div>{% endfor %}
+  </div>
+</div><br>
+{% endif %}
+
+<div class="card"><div class="row">
+  <button type="button" class="alt" onclick="sample()">🎲 Load a real example from the test set</button>
+  <span id="actual" style="color:var(--mut)"></span>
+</div></div><br>
+
+<form method="post" id="f" class="card">
+  <div class="fields">
+    <div><label>Date</label><input type="date" name="date" id="date" required value="{{ values.get('date', today) }}"></div>
+    <div><label>Hour (0–23)</label><input type="number" name="hr" id="hr" min="0" max="23" required value="{{ values.get('hr','8') }}"></div>
+    <div><label>Weather</label><select name="weathersit" id="weathersit">
+      {% for v,t in [(1,'Clear / few clouds'),(2,'Mist / cloudy'),(3,'Light rain / snow'),(4,'Heavy rain / snow')] %}
+      <option value="{{v}}" {{ 'selected' if values.get('weathersit','1')|string==v|string }}>{{t}}</option>{% endfor %}</select></div>
+    <div><label>Temperature (°C)</label><input type="number" step="any" name="temp" id="temp" required value="{{ values.get('temp','20') }}"></div>
+    <div><label>Feels-like (°C)</label><input type="number" step="any" name="atemp" id="atemp" required value="{{ values.get('atemp','20') }}"></div>
+    <div><label>Humidity (%)</label><input type="number" step="any" name="hum" id="hum" required value="{{ values.get('hum','55') }}"></div>
+    <div><label>Wind speed (km/h)</label><input type="number" step="any" name="wind" id="wind" required value="{{ values.get('wind','12') }}"></div>
+    <div><label>Public holiday?</label><select name="holiday" id="holiday"><option value="">No</option><option value="1" {{ 'selected' if values.get('holiday') }}>Yes</option></select></div>
+  </div>
+  <div class="row"><button type="submit">Forecast</button></div>
+</form>
+
+<script>
+async function sample(){
+  const r=await fetch('/sample'); const j=await r.json();
+  if(j.error){alert('Train the model first.');return;}
+  for(const k of ['date','hr','weathersit','temp','atemp','hum','wind']) document.getElementById(k).value=j[k];
+  document.getElementById('holiday').value=j.holiday?'1':'';
+  document.getElementById('actual').textContent='Real recorded demand for this hour: '+j.actual+' rentals. Press Forecast to compare.';
+}
+</script>
+{% endblock %}

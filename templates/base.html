@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bike Demand Forecaster</title>
+<style>
+:root{--bg:#0b1220;--card:#111a2e;--line:#22304d;--fg:#e2e8f0;--mut:#8a9bb8;--acc:#38bdf8;--warn:#f59e0b;--ok:#22c55e;--bad:#f43f5e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,Segoe UI,sans-serif}
+nav{display:flex;gap:20px;align-items:center;padding:14px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+nav b{font-size:17px;margin-right:auto}nav a{color:var(--mut);text-decoration:none}nav a:hover,nav a.on{color:var(--acc)}
+main{max-width:1150px;margin:auto;padding:28px}
+h1{margin:0 0 4px}h2{margin:34px 0 14px}.sub{color:var(--mut);margin-bottom:22px}
+.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.stat small{color:var(--mut);display:block}.stat b{font-size:26px}
+img{width:100%;border-radius:8px;display:block}
+button{background:var(--acc);color:#04243a;border:0;border-radius:8px;padding:9px 16px;font-weight:600;cursor:pointer;font-size:14px}
+button.alt{background:transparent;color:var(--fg);border:1px solid var(--line)}
+input,select{width:100%;background:#0b1424;color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font:inherit}
+label{font-size:12px;color:var(--mut)}
+.flash{padding:10px 14px;border-radius:8px;margin-bottom:16px}.flash.ok{background:#12351f}.flash.err{background:#3a1520}
+table{border-collapse:collapse;width:100%}td,th{padding:8px 14px;border-bottom:1px solid var(--line);text-align:left}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.best{color:var(--ok);font-weight:600}
+.chart{display:flex;align-items:flex-end;gap:4px;height:170px;margin-top:14px}
+.chart div{flex:1;background:#2b5f80;border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.chart div.sel{background:var(--warn)}
+.chart div span{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-size:10px;color:var(--mut);margin-top:3px}
+.badge{padding:3px 12px;border-radius:99px;font-weight:700;font-size:13px}
+.Low{background:#3a2a10;color:var(--warn)}.Medium{background:#10304a;color:var(--acc)}.High{background:#12351f;color:var(--ok)}
+</style></head><body>
+<nav><b>🚲 Bike Demand Forecaster</b>
+<a href="{{ url_for('index') }}" class="{{ 'on' if request.endpoint=='index' }}">Dashboard</a>
+<a href="{{ url_for('predict') }}" class="{{ 'on' if request.endpoint=='predict' }}">Forecast demand</a></nav>
+<main>
+{% with msgs = get_flashed_messages(with_categories=true) %}{% for c,t in msgs %}<div class="flash {{c}}">{{t}}</div>{% endfor %}{% endwith %}
+{% block body %}{% endblock %}
+</main></body></html>

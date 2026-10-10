@@ -1,0 +1,43 @@
+{% extends "base.html" %}{% block body %}
+<h1>Bike-sharing demand forecasting</h1>
+<div class="sub">Hourly rentals · Capital Bikeshare, Washington D.C. · 70% past → train, 30% future → test</div>
+
+<form method="post" action="{{ url_for('train') }}" class="row">
+  <button type="submit" onclick="this.textContent='Training… (about a minute)'">{{ 'Retrain models' if m else 'Train models' }}</button>
+  {% if not csv_ok %}<span style="color:var(--bad)">Put <code>hour.csv</code> next to app.py first.</span>{% endif %}
+</form>
+
+{% if m %}
+<div class="grid g4">
+  <div class="card stat"><small>Best model</small><b style="font-size:20px">{{ m.best_model }}</b></div>
+  <div class="card stat"><small>R² (test)</small><b>{{ m.r2 }}</b></div>
+  <div class="card stat"><small>MAE (bikes / hour)</small><b>{{ m.mae }}</b></div>
+  <div class="card stat"><small>RMSE</small><b>{{ m.rmse }}</b></div>
+  <div class="card stat"><small>MAPE</small><b>{{ m.mape }}%</b></div>
+</div>
+
+<h2>Data split (chronological)</h2>
+<div class="grid g4">
+  <div class="card stat"><small>Total hours</small><b>{{ '{:,}'.format(m.rows) }}</b></div>
+  <div class="card stat"><small>Train (70%)</small><b>{{ '{:,}'.format(m.train_rows) }}</b><small>{{ m.train_from }} → {{ m.train_to }}</small></div>
+  <div class="card stat"><small>Test (30%)</small><b>{{ '{:,}'.format(m.test_rows) }}</b><small>{{ m.test_from }} → {{ m.test_to }}</small></div>
+  <div class="card stat"><small>Avg / peak demand</small><b>{{ m.avg_demand }} / {{ m.peak_demand }}</b><small>rentals per hour</small></div>
+</div>
+
+<h2>Model comparison</h2>
+<div class="card"><table>
+<tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R²</th></tr>
+{% for n,s in m.comparison.items() %}
+<tr class="{{ 'best' if n==m.best_model }}"><td>{{ n }}{{ ' ✓' if n==m.best_model }}</td><td>{{ s.mae }}</td><td>{{ s.rmse }}</td><td>{{ s.r2 }}</td></tr>
+{% endfor %}</table></div>
+
+<h2>Graphs</h2>
+<div class="grid g3">
+  {% for f in ['by_hour','weekly','forecast','scatter','residuals','comparison','importance','temp_weather','heatmap'] %}
+  <div class="card"><img src="{{ url_for('static', filename='plots/'+f+'.png') }}?v={{ m.r2 }}{{ m.mae }}" alt="{{f}}" onerror="this.parentNode.style.display='none'"></div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">No model yet. Add <code>hour.csv</code> to the project folder and press <b>Train models</b>.</div>
+{% endif %}
+{% endblock %}
