@@ -12,7 +12,7 @@ Target: `cnt` (total rentals in that hour).
 
 > `casual` and `registered` are **deliberately excluded**: they sum to `cnt`, so using them would be target leakage.
 
-## ⚙️ Approach
+##  Approach
 1. Load `hour.csv` and sort chronologically
 2. **70/30 chronological split**: the first 70% of time trains the model, the last 30% (≈ Aug–Dec 2012) tests it. This mimics real forecasting (predict the future from the past) instead of a random shuffle that leaks neighbouring hours
 3. Train and compare **Linear Regression, Random Forest and Gradient Boosting**
@@ -28,7 +28,7 @@ Target: `cnt` (total rentals in that hour).
 
 The linear baseline struggles (R² 0.30) because demand is a non-linear function of the hour (twin commute peaks at 8:00 and 17:00), so tree ensembles win by a wide margin. The best model is off by about **49 bikes per hour** on average, on a mean demand of ~190.
 
-## 📊 Graphs generated
+## Graphs generated
 - Demand by hour (working day vs weekend)
 - Weekly demand 2011–2012 with the train/test cut
 - Forecast vs actual (last 14 days of the test set)
