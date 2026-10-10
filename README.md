@@ -1,10 +1,10 @@
-# 🚲 Bike Sharing Demand Forecasting: Flask + Docker
+#  Bike Sharing Demand Forecasting: Flask + Docker
 
 An end-to-end machine learning project that forecasts **hourly bike-rental demand** and serves the model through a Flask web app, with a training dashboard, evaluation graphs and a live forecasting form. Fully containerized with Docker.
 
 **Dataset:** [Bike Sharing Dataset (UCI / Kaggle)](https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset), Capital Bikeshare, Washington D.C., 2011–2012 (Fanaee-T & Gama, 2013).
 
-## 📌 Problem
+## Problem
 Bike-sharing operators need to know **how many bikes will be rented at a given hour** so they can rebalance stations, schedule maintenance and avoid empty or overflowing docks. Demand depends heavily on the hour, day type, season and weather. The dataset has **17,379 hourly records** (731 days), with a mean of ~190 rentals/hour and a peak of 977.
 
 Features used: `season`, `yr`, `mnth`, `hr`, `holiday`, `weekday`, `workingday`, `weathersit`, `temp`, `atemp`, `hum`, `windspeed`.
@@ -39,7 +39,7 @@ The linear baseline struggles (R² 0.30) because demand is a non-linear function
 - Temperature & weather vs demand
 - Weekday × hour heatmap
 
-## 🌐 Web app features
+## Web app features
 | Page | What it does |
 |------|--------------|
 | **Dashboard (`/`)** | Metric cards, chronological split info, model comparison table, all graphs, **Train / Retrain** button |
@@ -47,7 +47,7 @@ The linear baseline struggles (R² 0.30) because demand is a non-linear function
 
 The form takes friendly units (°C, %, km/h, a date picker). Season, weekday, working day and the dataset's normalization are handled automatically, and input is validated.
 
-## 🗂️ Project structure
+##  Project structure
 ```
 bike_demand/
 ├── app.py                # Flask routes (/, /train, /predict, /sample)
@@ -62,7 +62,7 @@ bike_demand/
 └── artifacts/            # model.joblib, metrics.json, test_samples.csv
 ```
 
-## 🐳 Run with Docker (recommended)
+##  Run with Docker (recommended)
 ```bash
 docker compose up --build
 ```
@@ -77,22 +77,22 @@ docker run -p 5000:5000 \
   bike-demand
 ```
 
-## 💻 Run without Docker
+## Run without Docker
 ```bash
 pip install -r requirements.txt
 python model.py     # train first
 python app.py       # open http://127.0.0.1:5000
 ```
 
-## 🔮 Future improvements
+## Future improvements
 - Add lag features (demand 1 h / 24 h / 168 h ago) and rolling averages
 - Try XGBoost / LightGBM and time-series cross-validation
 - Real weather forecast API so predictions need no manual weather input
 - Predict `casual` and `registered` users separately
 - Deploy the container to Render / AWS ECS / Google Cloud Run
 
-## 🛠️ Tech stack
+##  Tech stack
 Python · Flask · scikit-learn · pandas · NumPy · Matplotlib · joblib · Jinja2 · Docker · Gunicorn
 
-## 📄 License & credits
+##  License & credits
 Dataset: Hadi Fanaee-T, LIAAD, University of Porto. Cite: Fanaee-T & Gama, "Event labeling combining ensemble detectors and background knowledge", *Progress in Artificial Intelligence* (2013).
